@@ -1,5 +1,6 @@
 <!-- 
- index.html - Ethereum Wallet + QRCode
+ index.html - Ethereum Wallet
+ 
  -->
 
 <!Doctype html>
@@ -9,15 +10,15 @@
 	<meta charset="UTF-8">
 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<script type="text/javascript" src="js/web3.min.js"></script>
-	<script type="text/javascript" src="js/ethereumjs-tx-1.3.3.min.js"></script>
+	<script type="text/javascript" src="./js/web3.min.js"></script>
+	<script type="text/javascript" src="./js/ethereumjs-tx-1.3.3.min.js"></script>
 	<script src="https://code.jquery.com/jquery-latest.js "></script>
-	<script type="text/javascript" src="js/qrcode.js"></script>
+	<script type="text/javascript" src="./js/qrcode.js"></script>
 
 	<!-- bootsrtap CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
-	<title>My Ethereum Wallet_third</title>
+	<title>My Ethereum Wallet_final</title>
 
 	<script>
 		$(document).ready(function () {
@@ -32,6 +33,29 @@
 				console.log("Ropsten Ethereum API version : ", version);
 				console.log("web3: ", web3);
 			}
+			
+			let qrcode = new QRCode(document.getElementById("qrcode"), {
+			width : 250,
+			height : 250
+			});
+			
+			
+			function makeCode () {		
+				let elText = document.getElementById("fromaddress");
+	
+				if (!elText.value) {
+				alert("Input a text");
+				elText.focus();
+				return;
+				}
+				qrcode.makeCode(elText.value);
+			} 
+			
+			$('#qrcodeBtn').on('click', function(){
+				if (DEBUG) console.log("qrcodeBtn...... ");
+				makeCode();   
+			}) // end of txbuilder
+			
 			$('#send').on('click', async function () {
 				let fromaddress = $("#fromaddress").val();
 			    let toaddress = $("#toaddress").val();
@@ -39,7 +63,6 @@
 				let myPrivateKey = $("#mypassword").val(); <!-- Send하기 위해 필요한 4가지 정보 -->
 				
 			const privateKey = Buffer.from(myPrivateKey, 'hex');
-		
     if (DEBUG) console.log("privateKey: ", privateKey);
 
     web3.eth.getTransactionCount(fromaddress, (err, txCount) => {
@@ -97,7 +120,6 @@
 			})
 		})
 	</script>
-	<script type="text/javascript" src="qrcode.js"></script>
 </head>
 
 <body>
@@ -109,21 +131,22 @@
 		<button id="newAccount">계좌 생성</button>
 		<button id="getbalance">잔액 조회</button>
 		<button id="send">코인 전송</button>
-		<h5>송신처 <input id="fromaddress" size="50" value = "0x179207B3e136A9a4C18193dc870FcDfE5a3752FD" placeholder="보내는 계좌번호"></input> </h5>
-		<h5>수신처 <input id="toaddress" size="50" placeholder="받는 계좌번호"></input> </h5>
-		<h5>코인 <input id="sendcoin" size="20" placeholder="보낼 코인"></input> </h5>
-		<h5>비밀번호 <input id="mypassword" type=password size="50" value ="916f1f9b49197a78e42e88041f17d366d5bacb21dd20e7afd86278c8b5c31992" placeholder="비밀번호"></input> </h5>
+		<button id="qrcodeBtn"> QR코드 생성 </button>
+		<h5>송신처 <input id="fromaddress" size="45" value = "0x179207B3e136A9a4C18193dc870FcDfE5a3752FD" placeholder="보내는 계좌번호"></input> </h5>
+		<h5>수신처 <input id="toaddress" size="45" placeholder="받는 계좌번호"></input> </h5>
+		<h5>코인 <input id="sendcoin" size="45" placeholder="보낼 코인"></input> </h5>
+		<!--<h5>비밀번호 <input id="mypassword" type = password size="90" value ="916f1f9b49197a78e42e88041f17d366d5bacb21dd20e7afd86278c8b5c31992" placeholder="비밀번호"></input> </h5>-->
 		<!-- placeholder은 45 size 박스 안에 들어가는 글자
 			input type="password"는 텍스트를 가리는 효과-->
+		
 	</div>
 	<br>
 	<br>
 	<div class="container " role="main">
 		<h4><strong> Message </strong></h4>
 		<div id="message"></div>
+		<div id="qrcode" style="width:250px; height:250px; margin-top:15px;"></div>
 	</div>
-	
-
 	<hr>
 	<footer class="py-5 bg-dark">
 		<div class="container">
